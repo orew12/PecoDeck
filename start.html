@@ -182,15 +182,17 @@
                     }
                     typeText(lines[0], () => playLines(lines.slice(1)));
                }
-          setTimeout(()=> {
-               document.getElementById("cardSlot").classList.add("show");
-               playLines([
-               "welcome, this is the tutorial for peco deck!",
-               "Remember, this is version 1.0.",
-               "lets begin!",
-               "Click anywhere.",
-          ]);
-          }, 3000);
+          if (!localStorage.getItem("startIntroDone")) {
+               setTimeout(() => {
+                    document.getElementById("cardSlot").classList.add("show");
+                    playLines([
+                         "Welcome, this is the tutorial for peco deck!",
+                         "Remember, this is version 1.0",
+                         "Let's begin.",
+                         "click anywhere to advance.",
+                    ]);
+               },3000);
+          }
 
                document.addEventListener("click", (e) => {
                     if (e.target.closest("button")) return;
@@ -228,10 +230,9 @@
                               ["sana strategy.jpg", "jihyo strategy.jpg", "mina strategy.jpg"],
                               ["dahyun strategy.jpg", "chaeyoung strategy.jpg", "tzuyu strategy.jpg"]
                     ]
-                    },
-
-                    };
-               const crowned = jSON.parse(localStorage.getItem("crownedCards") || "[]");
+                    }
+               };
+               const crowned = JSON.parse(localStorage.getItem("crownedCards") || "[]");
                if (crowned.length > 0) {
                     const parts = crowned[crowned.length - 1].split("-");
                     const src = groups[parts[0]].rows[+parts[1]][+parts[2]];
@@ -239,6 +240,7 @@
                     icon.style.backgroundImage = 'url("' + src + '")';
                     icon.style.backgroundSize = "cover";
                }
+         
           
 
           </script>
