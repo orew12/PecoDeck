@@ -204,6 +204,7 @@
                function advance() {
                     if (moved) return;
                     moved = true;
+                    localStorage.setItem("startIntroDone", "1");
 
                     const slot = document.getElementById("cardSlot");
                     slot.classList.add("fade-out");
@@ -226,9 +227,9 @@
                const groups = {
                     twice : {
                          rows : [
-                              ["nayeon strategy.jpg", "jeongyeon strategy.jpg", "momo strategy.jpg"],
-                              ["sana strategy.jpg", "jihyo strategy.jpg", "mina strategy.jpg"],
-                              ["dahyun strategy.jpg", "chaeyoung strategy.jpg", "tzuyu strategy.jpg"]
+                              ["nayeon stratergy.jpg", "jeongyeon stratergy.jpg", "momo stratergy.jpg"],
+                              ["sana stratergy.jpg", "jihyo stratergy.jpg", "mina stratergy.jpg"],
+                              ["dahyun stratergy.jpg", "chaeyoung stratergy.jpg", "tzuyu stratergy.jpg"]
                     ]
                     }
                };
