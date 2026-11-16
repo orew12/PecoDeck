@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang = en>
+     <head>
+          <title> PECO DECK — Binder </title>
+          <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+          <style>
+               body {
+                    margin: 0;
+                    min-height: 100vh;
+                    background: #14141c;
+                    font-family: "Indie Flower", cursive;
+                    color: #eee;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 24px 20px 40px;
+                    box-sizing: border-box;
+
+
+               }
+               #tabs {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 20px;
+
+               }
+               #tabs button {
+                    font-family: "Indie Flower", cursive;
+                    font-size: 18px;
+                    padding: 8px 22px;
+                    border: 2px solid #3a3a4a;
+                    border-radius: 10px;
+                    background: #1e1e2a;
+                    color: #9a9aae;
+                    cursor: pointer;
+               }
+               #tabs button.active {
+                    border-color: #ffd76a;
+                    color: #ffd76a;
+                    background: #26263a;
+
+               } 
+               #binderPage {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    padding: 28px 32px;
+                    background: #1a1a22;
+                    border-radius: 12px;
+                    box-shadow: inset 0 0 70px rgba(0,0,0,0.7), 0 0 0 3px #2b2b3a;
+                    position: relative;
+               }
+
+               #binderPage::before {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top:12px;
+                    bottom: 12px;
+                    width: 2px;
+                    background: linear-gradient(to bottom, transparent, rgb(255,255,255,0.12), transparent);
+                    transform: translateX(-50%);
+               }
+               .binderRow {
+                    display: flex;
+                    gap: 16px;
+                    justify-content: center;
+
+               }
+               .slot {
+                    width: 110px;
+                    aspect-ratio: 3/4;
+                    border-radius: 6px;
+                    background: rgba(255,255,255,0.05);
+                    background-size: cover;
+                    background-position: center;
+                    position: relative;
+                    cursor: pointer;
+               }
+
+               .slot .crown {
+                    position: absolute;
+                    bottom: 2px;
+                    right: 4px;
+                    background: none;
+                    border: none;
+                    font-size: 18px;
+                    line-height: 1;
+                    color: rgba(255,255,255,0.3);
+                    cursor: pointer;
+                    padding: 2px;
+               }
+               .slot.crowned .crown {
+                    color: #ffd76a;
+                    text-shadow: 0 0 8px rgba(255,215,106,0.9);
+
+               }
+               #cardSlot {
+                    position: fixed;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 700px;
+                    height: 700px;
+                    background-image: url("text.png");
+                    background-size: 700px 700px;
+                    background-repeat: no-repeat;
+                    z-index: 5;
+                    opacity: 0;
+                    transition: opacity 0.5s ease;
+                    pointer-events: none;
+               }
+
+               #cardSlot.show {
+                    opacity: 1;
+               }
+
+               #cardSlot.fade-out {
+                    opacity: 0;
+               }
+               #cardSlot .sprite {
+                    position: absolute;
+                    left: 60px;
+                    top: 330px;
+                    transform: translateY(-50%);
+                    width: 95px;
+                    height: 95px;
+                    object-fit: contain;
+               }
+
+               #cardSlot .text {
+                    position: absolute;
+                    left:235px;
+                    top: 320 px;
+                    transform: translateY(-50%);
+                    font-size: 24px;
+                    font-weight: 700;
+                    text-shadow: 0 0 1px white, 0 0 1px white;
+                    color: white;
+                    width: 400px;
+                    text-align: center;
+                    white-space: normal;
+               }
+
+               #popout {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.6);
+                    display: none;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+               }
+
+               #popoutBox {
+                    background: #fff;
+                    color: #2b2b2b;
+                    border-radius: 16px;
+                    padding: 28px 34px;
+                    text-align: center;
+                    transform: scale(0.6);
+                    opacity: 0;
+                    transition: transform 0.35s ease, opacity 0.35s ease;
+               }
+               #popout.show {
+                    display: flex
+               }
+               #popoutRow {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 18px;
+
+               }
+               #popoutBg {
+                    width: 200px;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    border: 2px solid #2b2b2b;
+               }
+
+               #popout.show #popoutBox {
+                    transform: scale(1);
+                    opacity: 1;
+               }
+
+               #popoutCard {
+                    width: 140px;
+                    aspect-ratio: 3/4;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    border: 2px solid #2b2b2b;
+
+               }
+               #popoutText {
+                    font-size: 20px;
+                    margin: 14px 0;
+               }
+               #confirmBtn {
+                    font-family: "Indie Flower", cursive;
+                    font-size: 20px;
+                    padding: 8px 28px;
+                    border: 2px solid #2b2b2b;
+                    border-radius: 12px;
+                    background: #fff;
+                    cursor: pointer;
+               }
+               #backBtn {
+                    margin-top: 26px;
+                    font-family: "Indie Flower", cursive;
+                    font-size: 20px;
+                    padding: 10px 30px;
+                    border: 2px solid #3a3a4a;
+                    border-radius: 12px;
+                    background: #1e1e2a;
+                    color: #eee;
+                    cursor: pointer;                 
+          
+               }
+               </style>
+     </head>
+     <body>
+          
+          <div id = "tabs">
+               <button class = "tab active" data-group = "twice"> TWICE </button>
+          </div>
+          <div id = "binderPage">
+               <div class = "binderRow"></div>
+               <div class = "binderRow"></div>
+               <div class = "binderRow"></div>
+
+          </div>
+          <button id = "backBtn"> ← back </button>
+          <div id ="cardSlot">
+               <img class = "sprite" src="sprite.png" alt="">
+                    <span class = "text"></span>
+
+          </div>
+          <div id ="popout">
+               <div id = "popoutBox">
+                    <div id = "popoutRow">
+                       <img id = "popoutBg" src ="likey bg twice.jpg" alt = "">
+                        <img id = "popoutCard" src="" alt = "">
+                    </div>
+                 <p id = "popoutText"> You found a new card! </p>
+                 <button id = "confirmBtn"> CONFIRM </button>
+                </div>
+          </div>
+          <script>
+               const groups = {
+                    twice : {
+                         rows : [
+                              ["nayeon strategy.jpg", "jeongyeon strategy.jpg", "momo strategy.jpg"],
+                              ["sana strategy.jpg", "jihyo strategy.jpg", "mina strategy.jpg"],
+                              ["dahyun strategy.jpg", "chaeyoung strategy.jpg", "tzuyu strategy.jpg"]
+                         ]
+                    }
+                         
+                    };
+
+                    const rows = document.querySelectorAll(".binderRow");
+                    function renderGroup(name)  {
+                         const data = groups[name];
+                         const owned = JSON.parse(localStorage.getItem("ownedCards") || "[]");
+                         rows.forEach((row,i) => {
+                              row.innerHTML = "";
+                              (data.rows[i] || []).forEach((src, j) => {
+                                   const slot = document.createElement("div");
+                                   slot.className = "slot";
+                                   slot.dataset.card = name + "-" + i + "-" + j;
+                                   
+                                   if (owned.includes(slot.dataset.card)) slot.style.backgroundImage = 'url("' + src + '")';
+                                   slot.innerHTML = 
+                                   '<span class = "rarity"> R </span>' +
+                                   '<button class = "crown"> ♛ </button>';
+                                   row.appendChild(slot);
+                              });
+
+                         });
+                         restoreCrowns();
+                    
+                    }
+                    function getCrowned() {
+                         return JSON.parse(localStorage.getItem("crownedCards") || "[]");
+                    }
+                    function restoreCrowns() {
+                         const crowned = getCrowned();
+                         document.querySelectorAll(".slot").forEach(slot => {
+                              if (crowned.includes(slot.dataset.card)) {
+                                   slot.classList.add("crowned");
+                              }
+                         });
+                    }
+                    document.addEventListener("click", (e) => {
+                         const btn = e.target.closest(".crown");
+                         if (!btn) return;
+                         const slot = btn.closest(".slot");
+                         slot.classList.toggle("crowned");
+                         const crowned = getCrowned();
+                         const id = slot.dataset.card;
+                         const idx = crowned.indexOf(id);
+                         if (slot.classList.contains("crowned")) {
+                              if (idx === -1) crowned.push(id);
+
+                         } else if (idx > -1) {
+                              crowned.splice(idx, 1);
+                         }
+                         localStorage.setItem("crownedCards",JSON.stringify(crowned));
+                    });
+                    
+                    document.querySelectorAll(".tab").forEach(tab => {
+                         tab.addEventListener("click", ()=> {
+                              document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"))
+                              tab.classList.add("active");
+                              renderGroup(tab.dataset.group);
+                         });
+                    
+                    });
+                    document.getElementById("backBtn").addEventListener("click", () => {
+                         window.location.href = "start.html";
+                    });
+                    const textEl = document.querySelector("#cardSlot .text");
+                    let typingTimer = null;
+                    function typeText(message, onDone) {
+                    clearInterval(typingTimer);
+                    textEl.textContent = "";
+                    let i = 0;
+                    typingTimer = setInterval(() => {
+                         textEl.textContent += message[i];
+                         i++;
+                         if (i >= message.length) {
+                              clearInterval(typingTimer);
+                              if (onDone) setTimeout(onDone, 1200);
+                         }
+                    }, 45);
+               }
+
+                    const NEW_CARD = {
+                         id: "twice-0-0",
+                         src: "momo strategy.jpg.",
+                         bg: "likey bg twice.jpg"
+                    };
+
+                    function openPopout () {
+                         document.getElementById("popoutCard").src = NEW_CARD.src;
+                         document.getElementById("popout").classList.add("show");
+                    }
+
+                   document.getElementById("confirmBtn").addEventListener("click", () => {
+                    const owned = JSON.parse(localStorage.getItem("ownedCards") || "[]");
+                    if (!owned.includes(NEW_CARD.id)) owned.push(NEW_CARD.id);
+                    localStorage.setItem("ownedCards", JSON.stringify(owned));
+                    localStorage.setItem("startBg", NEW_CARD.bg);
+                    
+                    document.getElementById("popout").classList.remove("show");
+                    renderGroup("twice");
+                   })
+               setTimeout(() => {
+                    const slot = document.getElementById("cardSlot");
+                    slot.classList.remove("fade-out");
+                    slot.classList.add("show");
+                    typeText("Well, as a welcome gift, you get a MOMO CARD which is A!",() => {
+                         typeText("Why momo? beacuse she loves food!", () => {
+                              typeText("You also get a welcome background!", () => {
+                                   slot.classList.add("fade-out");
+                              });
+                         });
+                    }, 400);
+               });
+               
+               const startBg =localStorage.getItem("startBg");
+               if (startBg) {
+                    document.body.style.backgroundImage = 'url("' + startBg + '")';
+                    document.body.style.backgroundSize = "cover";
+                    document.body.style.backgroundPosition = "center";
+               }
+               
+          </script>
+     </body>
+</html>
