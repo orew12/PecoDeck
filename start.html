@@ -142,17 +142,7 @@
                <button id = "binderBtn"> 📕 </button>
           </div>
 
-          <div id = "cardStrip">
-               <div class ="card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-               <div class = "card locked"></div>
-          </div>
+          <div id = "cardStrip"></div>
           <button id = "startBtn"> PLAY </button>
           <script>
 
@@ -233,15 +223,22 @@
                     ]
                     }
                };
-               const crowned = JSON.parse(localStorage.getItem("crownedCards") || "[]");
-               if (crowned.length > 0) {
-                    const parts = crowned[crowned.length - 1].split("-");
-                    const src = groups[parts[0]].rows[+parts[1]][+parts[2]];
-                    const icon = document.getElementById("binderBtn");
-                    icon.style.backgroundImage = 'url("' + src + '")';
-                    icon.style.backgroundSize = "cover";
-               }
-         
+               const owned = JSON.parse(localStorage.getItem("ownedCards") || "[]");
+               const starred = JSON.parse(localStorage.getItem("starredGroups") || "[]");
+               const strip = document.getElementById("cardStrip");
+               strip.innerHTML = "";
+               starred.forEach(g => {
+                    groups[g].rows.forEach((rows, i)=> {
+                         rows.forEach((src, j) => {
+                              const id = g + "-" + i + "-" + j;
+                              const card = document.createElement("div");
+                              card.className = "card";
+                              card.style.backgroundImage = 'url("' + src + '")';
+                              if (!owned.includes(id)) card.classList.add("locked");
+                              strip.appendChild(card);
+                         });
+                    });
+               });
           
 
           </script>

@@ -266,6 +266,21 @@
                     color: #ffd76a;
                     cursor: pointer;
                }
+               #starBtn {
+                    font-family: "Indie Flower", cursive;
+                    font-family: 20px;
+                    padding: 8px 14px;
+                    border: 2px solid #3a3a4a;
+                    border-radius: 10px;
+                    background: #1e1e2a;
+                    color: #9a9aae;
+                    cursor: pointer;
+               
+               }
+               #starBtn.starred {
+                         border-color: #ffd76a;
+                         color: #ffd76a;
+               }
 
                </style>
      </head>
@@ -273,6 +288,7 @@
           
           <div id = "tabs">
                <button class = "tab active" data-group = "twice"> TWICE </button>
+               <button id = "starBtn">☆</button>
           </div>
           <div id = "binderPage">
                <div class = "binderRow"></div>
@@ -431,7 +447,7 @@
                     renderGroup("twice");
                    });
                   
-              if(!localStorage.getItem("introDone")) {
+              if(!localStorage.getItem("BinderIntroDone")) {
                setTimeout(() => {
                     const slot = document.getElementById("cardSlot");
                     slot.classList.remove("fade-out");
@@ -440,7 +456,7 @@
                          typeText("You also recieve a welcome gift background.", () => {
                               typeText("These are the twice cards.", () => {
                                    slot.classList.add("fade-out");
-                                   localStorage.setItem("introDone", "1");
+                                   localStorage.setItem("BinderIntroDone", "1");
                                    setTimeout(openPopout, 600);
                                    
                               });
@@ -448,6 +464,26 @@
                     });
                }, 400);
           }
+          function getStarred() {
+               return JSON.parse(localStorage.getItem("starredGroups") || "[]");
+          }
+          function updateStarBtn(group) {
+               const btn = document.getElementById("starBtn");
+               const on = getStarred().includes(group);
+               btn.textContent= on ? "★" : "☆";
+               btn.classList.toggle("starred", on);
+
+          }
+          document.getElementById("starBtn").addEventListener("click", () => {
+               const group = document.querySelector(".tab.active").dataset.group;
+               const starred = getStarred();
+               const idx = starred.indexOf(group);
+               if(idx === -1) starred.push(group);
+               else starred.splice(idx, 1);
+               localStorage.setItem("starredGroups", JSON.stringify(starred));
+               updateStarBtn(group);
+          });
+          updateStarBtn("twice");
           renderGroup("twice");
           
                
