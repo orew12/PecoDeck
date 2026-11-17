@@ -127,15 +127,7 @@
                          border: none;
                          z-index: 1
                     }
-                    .card {
-                         flex: 1;
-                         aspect-ratio: 3 / 4;
-                         border: 2px solid #2b2b2b;
-                         border-radius: 8px;
-                         background: #f0f0f0;
-                         background-size: cover;
-                         background-position: center;
-                    }
+               
 
                     .card.locked {
                          filter: grayscale(100%) brightness(0.75);
@@ -155,7 +147,73 @@
                          cursor: pointer;
                          z-index: 1;
                     }
+                    .card {
+                         flex: 1;
+                         aspect-ratio: 3/4;
+                         border: 2px solid #2b2b2b;
+                         border-radius: 8px;
+                         perspective: 800px;
+                         cursor: pointer;
+
+                    }
+                    .card .inner {
+                         position: relative;
+                         width: 100%;
+                         height: 100%;
+                         transform-style: preserve-3d;
+                         border-radius: 8px;
+                    }
+                    .card .front,
+                    .card .back {
+                         position: absolute;
+                         inset: 0;
+                         backface-visibility: hidden;
+                         background-size: cover;
+                         background-position: center;
+                         border-radius: 8px;
+                    }
+                    .card .back {
+                         transform: rotateY(180deg);
+                         background-image: url("twice\ strategy\ nemo\ step\ 2\ ver\ photocard\ back\ scan.jpg");
+                    }
+
+                    #cardInfo {
+                         position: absolute;
+                         width: 190px;  
+                         padding: 12px 14px;
+                         border: 2px solid #2b2b2b;
+                         border-radius: 12px;
+                         background: #fff;
+                         font-family: "Indie Flower", cursive;
+                         font-size: 16px;
+                         color: #2b2b2b;
+                         z-index: 20;
+                         opacity: 0;
+                         pointer-events: none;
+                         transform: translateY(6px);
+                         transition: opacity 0.3s ease, transform 0.3s ease;
+                    }
+
+                    #cardInfo.show {
+                         opacity: 1;
+                         transform: translateY(0);
+                    }
+
+                    #cardInfo .infoName {
+                         font-weight: 700;
+                         font-size: 19px;
+                         margin-bottom: 4px;
+                    }
+
+                    .card.spinning .inner {
+                         animation: spinInner 1s cubic-bezier(0.4,0, 0.2, 1);
+                    }
+                    @keyframes spinInner {
+                         0% { transform: rotateY(0deg); }
+                         100% { transform: rotateY(360deg); }
+                    }
                </style>
+
      </head>
      <body>
           <div id = "foodBar">
@@ -171,6 +229,10 @@
           <div id = "sideBar"> 
                <button id= "settingsBtn">⚙️</button>
                <button id = "binderBtn"> 📕 </button>
+          </div>
+          <div id = "cardInfo">
+               <div class = "infoName"></div>
+               <div class = "infoType"></div>
           </div>
 
           <div id = "cardStrip"></div>
@@ -282,19 +344,75 @@
                const starred = JSON.parse(localStorage.getItem("starredGroups") || "[]");
                const strip = document.getElementById("cardStrip");
                strip.innerHTML = "";
+               
+               const names = {
+                    "nayeon": "Nayeon", "jeongyeon" : "Jeongyeon", "momo": "Momo", 
+                    "sana": "Sana", "jihyo": "Jihyo", "mina": "Mina", 
+                    "dahyun": "Dahyun", "chaeyoung": "Chaeyoung", "tzuyu": "Tzuyu"
+               };
+               const infoEl = document.getElementById("cardInfo");
+               let openCard = null;
+               let spinning = false;
+
+               function closeInfo() {
+                    if (openCard) openCard.classList.remove("flipped");
+                    openCard = null;
+                    infoEl.classList.remove("show");
+               }
+               strip.innerHTML = "";
                starred.forEach(g => {
-                    groups[g].rows.forEach((rows, i)=> {
+                    groups[g].rows.forEach((rows, i) => {
                          rows.forEach((src, j) => {
-                              const id = g + "-" + i + "-" + j;
+                              const id = g +"-" + i + "-" + j;
                               const card = document.createElement("div");
                               card.className = "card";
-                              card.style.backgroundImage = 'url("' + src + '")';
+                              const inner = document.createElement("div");
+                              inner.className = "inner";
+                              const front = document.createElement("div");
+                              front.className = "front";
+                              front.style.backgroundImage = 'url("' + src + '")';
+                              const back = document.createElement("div");
+                              back.className = "back";
+                              inner.appendChild(front);
+                              inner.appendChild(back);
+                              card.appendChild(inner);
+
                               if (!owned.includes(id)) card.classList.add("locked");
+                              card.addEventListener("click", (e) => {
+                                   e.stopPropagation();
+                                   if (!owned.includes(id)) {
+                                        card.classList.add("shake");
+                                        setTimeout(() => card.classList.remove("shake"), 400);
+                                        return;
+                                   }
+                                   if (spinning) return;
+                                   if (openCard === card) {
+                                        closeInfo(); return; }
+                                        closeInfo();
+                                        spinning = true;
+                                        card.classList.add("spinning");
+                                        setTimeout(() => {
+                                             card.classList.remove("spinning");
+                                             spinning = false;
+                                             openCard = card;
+                                             const key = src.split(" ") [0].toLowerCase();
+                                             infoEl.querySelector(".infoName").textContent = "Card name: " + (names[key] || key);
+                                             infoEl.querySelector(".infoType").textContent = "Type: strategy " + (i + 1);
+                                             const r = card.getBoundingClientRect();
+                                             const panelW = 190, gap = 14;
+                                             let left = r.right + gap;
+                                             if (left + panelW > window.innerWidth - 20) left = r.left - panelW - gap;
+                                             infoEl.style.left = left + "px";
+                                             infoEl.style.top = (r.top + window.scrollY) + "px";
+                                             infoEl.classList.add("show");
+                                   }, 1000);
+                              });
                               strip.appendChild(card);
                          });
                     });
                });
-          
+
+               document.addEventListener("click", () => closeInfo());
 
           </script>
      </body>
