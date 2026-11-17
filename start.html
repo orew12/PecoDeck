@@ -63,6 +63,33 @@
                          text-align: center;
                          white-space: normal;
                     }
+                    #foodBar {
+                         position: absolute;
+                         top: 20px;
+                         left: 20px;
+                         display: flex;
+                         align-items: center;
+                         gap: 8px;
+                         padding: 6px 14px;
+                         border: 2px solid #2b2b2b;
+                         border-radius: 30px;
+                         background: #fff;
+                         font-family: "Indie Flower", cursive;
+                         font-size: 20px;
+                         color: #2b2b2b;
+                         z-index: 5;
+                    }
+                    #foodBar .foodIcon {
+                         font-size: 22px;
+                         line-height: 1;
+                    }
+
+                    #foodBar .foodPlus {
+                         cursor: pointer;
+                         font-weight: 700;
+                         color: #c0392b;
+                         padding: 0 4px;
+                    }
                
                     #sideBar {
                          position: fixed;
@@ -97,7 +124,7 @@
                          gap: 10px;
                          padding: 10px;
                          box-sizing: border-box;
-                         border: 3px solid #2b2b2b;
+                         border: none;
                          z-index: 1
                     }
                     .card {
@@ -131,6 +158,10 @@
                </style>
      </head>
      <body>
+          <div id = "foodBar">
+               <span class = "foodIcon">🍗</span>
+               <span id = "foodCount"> 0 </span>
+          </div>
           <div id = "bg"></div>
           <div id = "cardSlot">
                <img class = "sprite" src="sprite.png" alt="">
@@ -145,6 +176,15 @@
           <div id = "cardStrip"></div>
           <button id = "startBtn"> PLAY </button>
           <script>
+               function getFood() {
+                    return parseInt(localStorage.getItem("food") || "0", 10);  
+               }
+               function setFood(n) {
+                    localStorage.setItem("food", n);
+                    document.getElementById("foodCount").textContent = n;
+               };
+               setFood(getFood());
+               
 
                const textEl = document.querySelector("#cardSlot .text");
                let moved = false; 
@@ -181,21 +221,21 @@
                          "Let's begin.",
                          "click anywhere to advance.",
                     ]);
+                    localStorage.setItem("startIntroDone", "1"); 
                },3000);
           }
 
                document.addEventListener("click", (e) => {
                     if (e.target.closest("button")) return;
-                    
+                    if (!localStorage.getItem("startIntroDone")) return;
+                    if (localStorage.getItem("BinderIntroDone") && !localStorage.getItem("FoodIntroDone")) return;
                     advance();
-               })
+               });
 
           
                function advance() {
                     if (moved) return;
                     moved = true;
-                    localStorage.setItem("startIntroDone", "1");
-
                     const slot = document.getElementById("cardSlot");
                     slot.classList.add("fade-out");
                     setTimeout(() => {
@@ -214,11 +254,26 @@
                     window.location.href = "binder.html";
                });
 
+               if(localStorage.getItem("BinderIntroDone") && !localStorage.getItem("FoodIntroDone")) {
+                    setTimeout(() => {
+                         const slot = document.getElementById("cardSlot");
+                         slot.classList.remove("fade-out");
+                         slot.classList.add("show");
+                         typeText("Now, food is something thats like the currency,", () => {
+                              typeText("Its the currency that collects idols.", () => {
+                                   slot.classList.add("fade-out");
+                                   localStorage.setItem("FoodIntroDone", "1");
+                              });
+                         });
+
+                    }, 400);
+               }
+
                const groups = {
                     twice : {
                          rows : [
                               ["nayeon stratergy.jpg", "jeongyeon stratergy.jpg", "momo stratergy.jpg"],
-                              ["sana stratergy.jpg", "jihyo stratergy.jpg", "mina stratergy.jpg"],
+                              ["sana stratergy.jpg", "jihyo stratergy.jpg", "minda stratergy.jpg"],
                               ["dahyun stratergy.jpg", "chaeyoung stratergy.jpg", "tzuyu stratergy.jpg"]
                     ]
                     }
