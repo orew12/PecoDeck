@@ -15,4 +15,12 @@
 ## FEATURES IN DEVELOPMENT: 
  - Background setting
  - play event to obtain cards
- - more cards + more groups + company catagory 
+ - more cards + more groups + company catagory
+ - Prettier layout
+ - customizable profiles
+ - chats
+ - leaderboard
+ - small compitions for rewards
+
+Keep In mind, this is all in development! Report any bugs to me.
+
